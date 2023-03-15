@@ -1,34 +1,10 @@
-import { useState, useEffect, FC } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
 import { Card, Layout, Button, Switch, Space, Dropdown } from "antd";
 import type { MenuProps } from 'antd';
 import React, {} from 'react';
 import styles from '../styles/header.module.css';
-import {FormOutlined} from '@ant-design/icons';
+import { FormOutlined } from 'node_modules/@ant-design/icons';
 
 const { Header, Footer, Sider, Content } = Layout;
-const UID = 'u-s4t2ud-19980a5b8fe8b9e7250f2b1239c325f3f6579c38cc696313f5c761013195ef93';
-const SECRET = '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';
-const REDIRECT_URI = "http://localhost:3000";
-
-async function getToken(code: string) {
-  const { data } = await axios.post('https://api.intra.42.fr/oauth/token', {
-    grant_type: 'authorization_code',
-    client_id: UID,
-    client_secret: SECRET,
-    code: code,
-    redirect_uri: REDIRECT_URI,
-  });
-  return data.access_token;
-}
-
-function removeCodeFromUrl() {
-  const { protocol, host, pathname } = window.location;
-  const newUrl = `${protocol}//${host}${pathname}`;
-  window.history.replaceState({}, document.title, newUrl);
-}
-
 const items: MenuProps['items'] = [
     {
       label: <a href="https://www.antgroup.com">logout</a>,
@@ -47,7 +23,7 @@ const items: MenuProps['items'] = [
     },
   ];
 
-function UserCard({ card } : any){
+function UserCard({ card }){
     return (
         <Card title={card.title}>
 
@@ -60,7 +36,7 @@ const Main: React.FC = () => {
     const cards = [
         {
             id: 1,
-            title: "1.아무거나",
+            title: "1.아무거나 드실 분",
             currentPeople: 5,
             maxPeople: 10
         },
@@ -77,61 +53,61 @@ const Main: React.FC = () => {
             maxPeople: 100
         },
         {
-            id: 4,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 5,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 6,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 7,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 8,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 9,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 10,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 11,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 12,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
         },
         {
-            id: 13,
+            id: 3,
             title: "맛있는 거 드실 분",
             currentPeople: 1,
             maxPeople: 100
@@ -155,8 +131,8 @@ const Main: React.FC = () => {
         </Header>
         <div className={styles.pad}>
             {cards.map(card => (
-                <UserCard card={card} key={card.id}/>
-            ))}
+        <UserCard card={card} />
+    ))}
         </div>
         </>
         );
