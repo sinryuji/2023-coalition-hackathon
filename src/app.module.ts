@@ -5,6 +5,7 @@ import { PostsModule } from './posts/posts.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommentsModule } from './comments/comments.module';
+import { PartiesModule } from './parties/parties.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { CommentsModule } from './comments/comments.module';
       inject: [ConfigService],
     }),
     PostsModule,
-    CommentsModule],
+    CommentsModule,
+    PartiesModule],
   controllers: [AppController],
   providers: [AppService],
 })

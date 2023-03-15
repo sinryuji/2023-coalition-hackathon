@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-export type CommentDocument = Comment & Document;
+export type PartyDocument = Party & Document;
 
 @Schema()
-export class Comment {
+export class Party {
 
   @Prop({
     deafult: Date.now(),
@@ -27,10 +27,16 @@ export class Comment {
   postId: mongoose.Schema.Types.ObjectId;
 
   @Prop()
-  content: string;
+  partyTitle: string;
+
+  @Prop()
+  joinable: boolean;
 
   @Prop()
   intraId: string;
+
+  @Prop()
+  peopleNum: number;
 }
 
-export const CommentSchema = SchemaFactory.createForClass(Comment).set('versionKey', false);
+export const PartySchema = SchemaFactory.createForClass(Party).set('versionKey', false);
