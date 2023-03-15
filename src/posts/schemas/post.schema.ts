@@ -7,24 +7,21 @@ export type PostDocument = Post & Document;
 export class Post {
 
   @Prop({
-    required: true,
-    deafult: Date.now,
+    deafult: Date.now(),
     type: mongoose.Schema.Types.Date
   })
-  ceratedAt: Date;
+  createdAt: number;
 
   @Prop({
-    required: true,
-    deafult: Date.now,
+    deafult: Date.now(),
     type: mongoose.Schema.Types.Date
   })
-  updatedAt: Date;
+  updatedAt: number;
 
-  @Prop({
-    required: true,
-    type: mongoose.Schema.Types.ObjectId
-  })
-  _id: mongoose.Schema.Types.ObjectId;
+//  @Prop({
+//    type: mongoose.Schema.Types.ObjectId
+//  })
+//  _id: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   title: string;
@@ -49,8 +46,15 @@ export class Post {
   @Prop()
   currentPeopleNum: number;
 
-  @Prop()
-  matchingEndTime: Date;
+  @Prop({
+    type: mongoose.Schema.Types.Date
+  })
+  matchingEndTime: number;
+
+  @Prop({
+    type: mongoose.Schema.Types.Boolean
+  })
+  avaliable: boolean;
 }
 
-export const PostSchema = SchemaFactory.createForClass(Post);
+export const PostSchema = SchemaFactory.createForClass(Post).set('versionKey', false);

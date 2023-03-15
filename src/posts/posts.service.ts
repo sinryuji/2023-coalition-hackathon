@@ -8,41 +8,67 @@ import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectModel(Post.name) private PostModel: Model<PostDocument>
+    @InjectModel(Post.name) private postModel: Model<PostDocument>
  ) {}
 
   async create(createPostDto: CreatePostDto): Promise<boolean> {
     try {
-
+      const post = new this.postModel({
+        title: "hi",
+        menu: "chicken",
+        content: "",
+        deliveryPrice: 3000,
+        intraId: "hyeongki",
+        maximumPeopleNum: 10,
+        currentPeopleNum: 1,
+        matchingEndTime: Date.now(),
+        avaliable: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      await post.save();
     } catch(err) {
-      console.log('error...');
+      console.log(err);
     }
     return true;
   }
 
   async findAll(): Promise<Post[]> {
     try {
-      const result = await this.PostModel.find().exec();
+      const result = await this.postModel.find().exec();
       return result;
     } catch (err) {
-      console.log('error...');
+      console.log(err);
     }
   }
 
   async findOne(id: string): Promise<Post> {
     try {
-      const result = await this.PostModel.findById(id).exec();
+      const result = await this.postModel.findById(id).exec();
       return result;
     } catch (err) {
-      console.log('error...');
+      console.log(err);
     }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: string, updatePostDto: UpdatePostDto): Promise<boolean> {
+    try {
+      await this.postModel.findByIdAndUpdate(
+        { _id: id },
+        { title: "hello" }
+      );
+      return true;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: string): Promise<boolean> {
+    try {
+      await this.postModel.findByIdAndDelete(id).exec();
+      return true;
+    } catch (err) {
+      console.log(err);
+    }
   }
 }

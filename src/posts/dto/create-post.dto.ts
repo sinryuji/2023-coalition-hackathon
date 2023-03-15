@@ -23,15 +23,15 @@ export class CreatePostDto {
   @IsNumber()
   currentPeopleNum: number;
 
-  @IsDate()
-  matchingEndDate: Date;
+  @IsNumber()
+  matchingEndTime: number;
 
   @IsBoolean()
   avaliable: boolean;
 
-  @IsDate()
-  createdAt: Date;
+  @IsNumber()
+  createdAt: number;;
 
-  @IsDate()
-  updatedAt: Date;
+  @IsNumber()
+  updatedAt: number;
 }
