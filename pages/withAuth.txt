@@ -1,0 +1,20 @@
+import { FC } from 'react';
+import { useRouter } from 'next/router';
+
+const withAuth = (WrappedComponent: FC) => {
+  const AuthComponent: FC = () => {
+    const router = useRouter();
+    const loggedIn = localStorage.getItem('token');
+
+    if (!loggedIn) {
+      router.push('/login');
+      return null;
+    }
+
+    return <WrappedComponent />;
+  };
+
+  return AuthComponent;
+};
+
+export default withAuth;
