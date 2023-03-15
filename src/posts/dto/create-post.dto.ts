@@ -12,26 +12,26 @@ export class CreatePostDto {
   content: string;
 
   @IsNumber()
-  delivery_price: number;
+  deliveryPrice: number;
 
   @IsString()
-  intra_id: string;
+  intraId: string;
 
   @IsNumber()
-  maximum_people_num: number;
+  maximumPeopleNum: number;
 
   @IsNumber()
-  current_people_num: number;
+  currentPeopleNum: number;
 
   @IsDate()
-  matching_end_date: Date;
+  matchingEndDate: Date;
 
   @IsBoolean()
   avaliable: boolean;
 
   @IsDate()
-  created_at: Date;
+  createdAt: Date;
 
   @IsDate()
-  updated_at: Date;
+  updatedAt: Date;
 }
