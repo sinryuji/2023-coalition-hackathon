@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsDate, IsBoolean, IsOptional } from 'class-validator';
+import { IsNumber, IsString, IsBoolean, IsOptional } from 'class-validator';
 
 export class CreatePostDto {
   @IsString()
@@ -30,7 +30,7 @@ export class CreatePostDto {
   avaliable: boolean;
 
   @IsNumber()
-  createdAt: number;;
+  createdAt: number;
 
   @IsNumber()
   updatedAt: number;

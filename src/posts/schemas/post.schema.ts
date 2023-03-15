@@ -18,11 +18,6 @@ export class Post {
   })
   updatedAt: number;
 
-//  @Prop({
-//    type: mongoose.Schema.Types.ObjectId
-//  })
-//  _id: mongoose.Schema.Types.ObjectId;
-
   @Prop()
   title: string;
 
