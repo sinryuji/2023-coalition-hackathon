@@ -14,10 +14,10 @@ export class PartiesService {
     try {
       const party = new this.partyModel({
         postId: postId,
-        partyTitle: "hihi",
-        joinable: true,
-        intarId: "hyeongki",
-        peopleNum: 1,
+        partyTitle: createPartyDto.partyTitle,
+        joinable: createPartyDto.joinable,
+        intarId: createPartyDto.intraId,
+        peopleNum: createPartyDto.peopleNum,
         createdAt: Date.now(),
         updatedAt: Date.now()
       });
@@ -52,7 +52,14 @@ export class PartiesService {
     try {
       await this.partyModel.findByIdAndUpdate(
         { _id: id },
-        { partyTitle: "fuck" }
+        { 
+          postId: id,
+          partyTitle: updatePartyDto.partyTitle,
+          joinable: updatePartyDto.joinable,
+          intarId: updatePartyDto.intraId,
+          peopleNum: updatePartyDto.peopleNum,
+          updatedAt: Date.now()
+        }
       );
       return true;
     } catch(err) {

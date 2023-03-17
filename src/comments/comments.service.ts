@@ -14,8 +14,8 @@ export class CommentsService {
     try {
       const comment = new this.commentModel({
         postId: postId,
-        content: "hello",
-        intraId: "hyeongki",
+        content: createCommentDto.content,
+        intraId: createCommentDto.intraId,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -45,7 +45,12 @@ export class CommentsService {
     try {
       await this.commentModel.findByIdAndUpdate(
         { _id: id },
-        { content: "fuck" }
+        { 
+          postId: id,
+          content: updateCommentDto.content,
+          intraId: updateCommentDto.intraId,
+          updatedAt: Date.now(),
+        }
       );
       return true;
     } catch(err) {

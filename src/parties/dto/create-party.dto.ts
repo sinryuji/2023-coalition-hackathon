@@ -14,7 +14,7 @@ export class CreatePartyDto {
   intraId: string;
 
   @IsNumber()
-  popleNum: number;
+  peopleNum: number;
 
   @IsNumber()
   createdAt: number;

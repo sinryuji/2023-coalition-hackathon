@@ -5,6 +5,10 @@ export type PostDocument = Post & Document;
 
 @Schema()
 export class Post {
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId
+  })
+  _id: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     deafult: Date.now(),
@@ -29,7 +33,9 @@ export class Post {
   })
   content: string;
 
-  @Prop()
+  @Prop({
+    nullable: true
+  })
   deliveryPrice: number;
 
   @Prop()
@@ -49,7 +55,7 @@ export class Post {
   @Prop({
     type: mongoose.Schema.Types.Boolean
   })
-  avaliable: boolean;
+  available: boolean;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post).set('versionKey', false);
