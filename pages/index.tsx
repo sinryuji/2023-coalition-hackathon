@@ -1,9 +1,10 @@
-import { Card, Layout, Button, Switch, Space, Dropdown } from "antd";
+import { Card, Layout, Button, Switch, Space, Dropdown, Collapse } from "antd";
 import type { MenuProps } from 'antd';
 import React, {} from 'react';
 import styles from '../styles/header.module.css';
-import {FormOutlined} from '@ant-design/icons';
+import {FormOutlined, UserOutlined} from '@ant-design/icons';
 
+const { Panel } = Collapse;
 const { Header, Footer, Sider, Content } = Layout;
 
 const items: MenuProps['items'] = [
@@ -26,9 +27,12 @@ const items: MenuProps['items'] = [
 
 function UserCard({ card } : any){
     return (
-        <Card title={card.title}>
-
-        </Card>
+            <Collapse>
+                <Panel header={card.title} key="1" showArrow={false}
+                extra={<span>{"메뉴: " + card.menu + " "} <UserOutlined /> {card.currentPeople} / {card.maxPeople}</span>}>
+                    {card.content}
+                </Panel>
+            </Collapse>
     );
 }
 
@@ -39,7 +43,11 @@ const Main: React.FC = () => {
             id: 1,
             title: "1.아무거나",
             currentPeople: 5,
-            maxPeople: 10
+            maxPeople: 10,
+            menu: "미정",
+            deliveryPrice: 3000,
+            content: "뭔가 하고 싶은 말",
+
         },
         {
             id: 2,
@@ -118,7 +126,7 @@ const Main: React.FC = () => {
     return (
         <>
         <Header className={styles.headerStyle}>
-            <Space direction="horizontal">
+            <Space className={styles.headerSpace}direction="horizontal">
                 <Button icon={<FormOutlined />}>글 쓰기</Button>
                 <Switch checkedChildren="모집 중" unCheckedChildren="마감" defaultChecked />
                 <Dropdown menu={{ items }} trigger={['click']}>
