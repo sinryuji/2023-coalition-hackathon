@@ -6,6 +6,7 @@ import React, {useState} from 'react';
 import styles from '../styles/header.module.css';
 import {FormOutlined, UserOutlined} from '@ant-design/icons';
 import axios from "axios";
+import {join} from "path";
 
 React.useLayoutEffect = React.useEffect;
 
@@ -16,8 +17,9 @@ const { Header, Footer, Sider, Content } = Layout;
 interface DataType {
     intraId: string;
     partyTitle: string;
-    partyNum: number;
+    peopleNum: number;
     joinable: boolean;
+    postId: any;
   }
 
 const columns: ColumnsType<DataType> = [
@@ -35,8 +37,8 @@ const columns: ColumnsType<DataType> = [
     },
     {
         title: '파티 인원',
-        dataIndex: 'partyNum',
-        key: 'partyNum',
+        dataIndex: 'peopleNum',
+        key: 'peoplwNum',
         render: (text) => <p>{text}</p>,
     },
     {
@@ -76,15 +78,17 @@ wrapperCol: { offset: 8, span: 16 },
 };
 
 
-function UserComment({ comment } : any){
+function UserComment({ comment } : any, { key }){
     return (
         <p style={{wordBreak: "break-all"}}>{comment.intraId}: {comment.content}</p>
     );
 }
 
-function UserCard({ card } : any){
+function UserCard({ card } : any, { key }){
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [parties, setParties] = useState([]);
+    const [comments, setComments] = useState([]);
 
     const [form] = Form.useForm();
     const totalPrice = card.deliveryPrice;
@@ -100,9 +104,15 @@ function UserCard({ card } : any){
         setIsModalOpen(true);
     };
 
-    const handleOk = () => {
-        //party를 post 하는 부분
-        let partyBody = form.getFieldsValue(["partyTitle", "joinable", "partyNum"]);
+    const postParty = async () => {
+        let body = {
+            postId: card._id,
+            intraId: "default",
+            partyTitle: form.getFieldValue("partyTitle"),
+            joinable: form.getFieldValue("joinable"),
+            peopleNum: form.getFieldValue("peopleNum"),
+        }
+        await axios.post("http://localhost:8080/parties", body);
         setIsModalOpen(false);
     };
 
@@ -112,17 +122,39 @@ function UserCard({ card } : any){
 
     const onChange = () => {
       setValues({
-        peopleNum: peopleBefore + form.getFieldValue("partyNum"),
+        peopleNum: peopleBefore + form.getFieldValue("peopleNum"),
         expectedPrice: totalPrice != undefined ?
-        Math.round(totalPrice / (peopleBefore + form.getFieldValue("partyNum"))) : undefined
+        Math.round(totalPrice / (peopleBefore + form.getFieldValue("peopleNum"))) : undefined
       });
     };
+    
+    async function getParties() {
+      await axios.get("http://localhost:8080/parties/" + card._id)
+        .then(res => {
+          setParties(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
 
-    function onCommentSubmit() {
-        //comment를 post 하는 부분
-        let commentBody = {
+    async function getComments() {
+      await axios.get("http://localhost:8080/comments/" + card._id)
+        .then(res => {
+          setComments(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
+
+    async function onCommentSubmit() {
+        let body = {
+            postId: card._id,
             content: text,
+            intraId: "defualt"
         };
+        await axios.post("http://localhost:8080/comments/", body);
     }
 
     function onTextChange(e : any) {
@@ -130,43 +162,8 @@ function UserCard({ card } : any){
         console.log(e.target.value);
     }
 
-    //어떤 호출로 파티들을 받아옴
-    const parties: DataType[] = [
-        {
-            intraId: "someone",
-            partyTitle: "파티 이름",
-            partyNum: 2,
-            joinable: true,
-        },
-        {
-            intraId: "someone",
-            partyTitle: "파티 이름",
-            partyNum: 2,
-            joinable: true,
-        },
-        {
-            intraId: "seunghoy",
-            partyTitle: "seunghoy의 파티",
-            partyNum: 3,
-            joinable: false,
-        },
-    ];
-
-    const comments = [
-        {
-            id: 0,
-            intraId: "default",
-            content: "sdlkfjlsjlskjsd",
-        },
-        {
-            id: 1,
-            intraId: "default",
-            content: "sdlkfjlsjlskjsd",
-        },
-    ];
-
     return (
-            <Collapse>
+            <Collapse onChange={getParties}>
                 <Panel header={card.title} key="1" showArrow={false}
                 extra={<span>{"메뉴: " + card.menu + " "} <UserOutlined /> {card.currentPeople} / {card.maxPeople}</span>}>
                     <Space style={{display: "flex", justifyContent: "space-between"}} direction="horizontal">
@@ -174,7 +171,7 @@ function UserCard({ card } : any){
                         <Button type="primary" onClick={showModal}>
                             그룹에 참여하기
                         </Button>
-                        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                        <Modal open={isModalOpen} onOk={postParty} onCancel={handleCancel}>
                             <h1 className={styles.title}>파티 추가</h1>
                             <div style={{textAlign:'right', paddingRight:'20%'}}>
                                 예상 배달 팁: {totalPrice}/{peopleNum}={expectedPrice}원
@@ -185,7 +182,7 @@ function UserCard({ card } : any){
                             name="control-hooks"
                             initialValues={{
                                 ["joinable"]: false,
-                                ["partyNum"]: 1
+                                ["peopleNum"]: 1
                             }}
                             className={styles.form}
                             >
@@ -195,82 +192,60 @@ function UserCard({ card } : any){
                             <Form.Item name="joinable" rules={[{ required: false }]} valuePropName="checked">
                                 <Checkbox defaultChecked={false}>따로 먹을게요</Checkbox>
                             </Form.Item>
-                            <Form.Item name="partyNum" label="파티 인원" rules={[{ required: true }]}>
+                            <Form.Item name="peopleNum" label="파티 인원" rules={[{ required: true }]}>
                                 <InputNumber min={1} max={maxP} onChange={onChange} />
                             </Form.Item>
                             </Form>
                         </Modal>
                     </Space>
                     <p style={{wordBreak: "break-all"}}>{card.content}</p>
-                    <Table columns={columns} dataSource={parties} pagination={false}/>
+                    <Table columns={columns} rowKey={"_id"} dataSource={parties} pagination={false}/>
+                <Collapse ghost onChange={getComments}>
+                    <Panel header="댓글 창" key="2">
+                        {comments.map(comment => (
+                            <UserComment comment={comment} key={comment._id}/>
+                        ))}
+                        <Space.Compact block>
+                            <TextArea placeholder="100자 제한" maxLength={100} onChange={onTextChange}/>
+                            <Button type="primary" onClick={onCommentSubmit}>작성</Button>
+                        </Space.Compact>
+                    </Panel>
+                </Collapse>
 
-                    <Collapse ghost>
-                        <Panel header="댓글 창" key='1'>
-                            {comments.map(comment => (
-                                <UserComment comment={comment} key={comment.id}/>
-                            ))}
-                            <Space.Compact block>
-                                <TextArea placeholder="100자 제한" maxLength={100} onChange={onTextChange}/>
-                                <Button type="primary" onClick={onCommentSubmit}>Submit</Button>
-                            </Space.Compact>
-                        </Panel>
-                    </Collapse>
                 </Panel>
+
             </Collapse>
     );
 }
 
 const Main: React.FC = () => {
-    const [switchValue, setSwitchValue] = useState(true);
+    const [switchValue, setSwitchValue] = useState(true);    
+    const [availableCard, setAvailableCard] = useState([]);
+    const [unavailableCard, setUnavailableCard] = useState([]);
 
     const handleSwitchChange = (checked: boolean) => {
         setSwitchValue(checked);
     };
 
-    let availableCard = Array();
-    let unavailableCard = Array();
+    let aCard = Array();
+    let uCard = Array();
     let cards = Array();
-
 
     const getCards = async () => {
       await axios.get("http://localhost:8080/posts")
         .then(res => {
           cards = res.data;
           cards.map(c => (
-              c.available ? availableCard.push(c) : unavailableCard.push(c)
+              c.available ? aCard.push(c) : uCard.push(c)
           ));
-          console.log(cards);
+          setAvailableCard(aCard);
+          setUnavailableCard(uCard);
         })
         .catch(err => {
           console.log(err);
         });
     }
-
     getCards();
-    console.log("out:", cards);
-
-//    const cards = [
-//        {
-//            id: 1,
-//            title: "1.아무거나",
-//            currentPeople: 5,
-//            maxPeople: 10,
-//            menu: "미정",
-//            deliveryPrice: 4000,
-//            content: "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
-//            available: true,
-//        },
-//        {
-//            id: 2,
-//            title: "2.아무거나 드실 분",
-//            currentPeople: 6,
-//            maxPeople: 11,
-//            menu: "맛있는 거",
-//            deliveryPrice: 3000,
-//            content: "1234567890",
-//            available: false,
-//        },
-//    ];
     
     return (
         <>

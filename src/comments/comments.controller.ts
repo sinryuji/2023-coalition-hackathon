@@ -8,11 +8,10 @@ import { Comment } from './schemas/comment.schema';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @Post(':postId')
+  @Post()
   async create(
-    @Param('postId') postId: string,
     @Body() createCommentDto: CreateCommentDto): Promise<boolean>  {
-    return this.commentsService.create(postId, createCommentDto);
+    return this.commentsService.create(createCommentDto);
   }
 
   @Get(':postId')

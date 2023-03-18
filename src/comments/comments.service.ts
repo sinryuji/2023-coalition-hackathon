@@ -10,10 +10,10 @@ export class CommentsService {
   constructor(
    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>) {}
 
-  async create(postId: string, createCommentDto: CreateCommentDto): Promise<boolean> {
+  async create(createCommentDto: CreateCommentDto): Promise<boolean> {
     try {
       const comment = new this.commentModel({
-        postId: postId,
+        postId: createCommentDto.postId,
         content: createCommentDto.content,
         intraId: createCommentDto.intraId,
         createdAt: Date.now(),
