@@ -1,12 +1,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { checkIfLoggedIn, goMainPage } from '../utils/utils';
-import { useRecoilState } from "recoil";
-import { nicknameState } from "components/atom";
-
-const UID = 'u-s4t2ud-19980a5b8fe8b9e7250f2b1239c325f3f6579c38cc696313f5c761013195ef93';
-const SECRET = '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';
-const REDIRECT_URI = "http://localhost:3000";
 
 const Login = () => {
   const router = useRouter();
@@ -22,7 +16,7 @@ const Login = () => {
   }, []);
 
   const handleLogin = async () => {
-    const url = `https://api.intra.42.fr/oauth/authorize?client_id=${UID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    const url = `https://api.intra.42.fr/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_API_UID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&response_type=code`;
     window.location.assign(url);
   };
 
