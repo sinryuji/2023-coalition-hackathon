@@ -171,10 +171,10 @@ function UserCard({ card } : any){
                 extra={<span>{"메뉴: " + card.menu + " "} <UserOutlined /> {card.currentPeople} / {card.maxPeople}</span>}>
                     <Space style={{display: "flex", justifyContent: "space-between"}} direction="horizontal">
                         <p>추가 정보:</p>
-                        <Button type="primary" onClick={showModal}>
+                        <Button type="primary" disabled={!card.available} onClick={showModal}>{/*나중에 추가*/}
                             그룹에 참여하기
                         </Button>
-                        <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                        <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
                             <h1 className={styles.title}>파티 추가</h1>
                             <div style={{textAlign:'right', paddingRight:'20%'}}>
                                 예상 배달 팁: {totalPrice}/{peopleNum}={expectedPrice}원
@@ -182,6 +182,7 @@ function UserCard({ card } : any){
                             <Form
                             {...layout}
                             form={form}
+                            onFinish={handleOk}
                             name="control-hooks"
                             initialValues={{
                                 ["joinable"]: false,
@@ -222,39 +223,37 @@ function UserCard({ card } : any){
 
 const Main: React.FC = () => {
     const [switchValue, setSwitchValue] = useState(true);
+    const [availableCard, setAvailableCard] = useState([]);
+    const [unavailableCard, setUnavailableCard] = useState([]);
 
     const handleSwitchChange = (checked: boolean) => {
         setSwitchValue(checked);
     };
 
-    const cards = [
-        {
-            id: 1,
-            title: "1.아무거나",
-            currentPeople: 5,
-            maxPeople: 10,
-            menu: "미정",
-            deliveryPrice: 4000,
-            content: "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
-            available: true,
-        },
-        {
-            id: 2,
-            title: "2.아무거나 드실 분",
-            currentPeople: 6,
-            maxPeople: 11,
-            menu: "맛있는 거",
-            deliveryPrice: 3000,
-            content: "1234567890",
-            available: false,
-        },
-    ];
-    let availableCard = Array();
-    let unavailableCard = Array();
-    cards.map(c => (
-        c.available ? availableCard.push(c) : unavailableCard.push(c)
-    ));
-    
+    let aCard = Array();
+    let uCard = Array();
+    let cards = Array();
+
+
+    const getCards = async () => {
+      await axios.get("http://localhost:8080/posts")
+        .then(res => {
+          cards = res.data;
+          cards.map(c => (
+              c.available ? aCard.push(c) : uCard.push(c)
+          ));
+          setAvailableCard(aCard);
+          setUnavailableCard(uCard);
+          console.log(cards);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+
+    getCards();
+    console.log("out:", cards);
+
     return (
         <>
         <Header className={styles.headerStyle}>
@@ -273,8 +272,8 @@ const Main: React.FC = () => {
         <FloatButton icon={<FormOutlined />} tooltip={<div>그룹 생성하기</div>} 
         shape="square" type="primary" href="/group" description="그룹 생성"/>
         <div className={styles.pad}>
-            {switchValue ? availableCard.map(card => (<UserCard card={card} key={card.id}/>))
-            : unavailableCard.map(card => (<UserCard card={card} key={card.id}/>))}
+            {switchValue ? availableCard.map(card => (<UserCard card={card} key={card._id}/>))
+            : unavailableCard.map(card => (<UserCard card={card} key={card._id}/>))}
         </div>
         </>
         );
