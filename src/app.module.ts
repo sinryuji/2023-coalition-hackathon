@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommentsModule } from './comments/comments.module';
 import { PartiesModule } from './parties/parties.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TaskService } from './task/task.service';
 import { TaskModule } from './task/task.module';
 
 @Module({
