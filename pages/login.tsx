@@ -22,7 +22,7 @@ const Login = () => {
 
   return (
     <div>
-      <h1>HELLO!</h1>
+      <h1>배공파</h1>
       <img src="https://t1.daumcdn.net/cfile/tistory/99C9493C5F32979520" width='300'></img>
       <br></br>
       <button onClick={handleLogin}>Login button</button>

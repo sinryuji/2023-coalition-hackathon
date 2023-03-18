@@ -11,13 +11,13 @@ import { useRouter, NextRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import withAuth from "../components/withAuth";
 import { goMainPage, getNickname } from '../utils/utils';
-
+​
 function removeCodeFromUrl() {
   const { protocol, host, pathname } = window.location;
   const newUrl = `${protocol}//${host}${pathname}`;
   window.history.replaceState({}, document.title, newUrl);
 }
-
+​
 async function setCookieFromCode(router: NextRouter) {
   const code = new URLSearchParams(window.location.search).get("code");
   if (code !== null) {
@@ -41,20 +41,20 @@ async function setCookieFromCode(router: NextRouter) {
     }
   }
 }
-
+​
 React.useLayoutEffect = React.useEffect;
-
+​
 const { TextArea } = Input;
 const { Panel } = Collapse;
 const { Header, Footer, Sider, Content } = Layout;
-
+​
 interface DataType {
     intraId: string;
     partyTitle: string;
     partyNum: number;
     joinable: boolean;
   }
-
+​
 const columns: ColumnsType<DataType> = [
     {
         title: '파티장',
@@ -81,10 +81,10 @@ const columns: ColumnsType<DataType> = [
         render: (joinable) => joinable == true ? <p>같이 먹어도 되요</p> : <p>따로 먹을게요</p>,
     },
 ];
-
+​
 const items: MenuProps['items'] = [
     {
-      label: <p>nickname</p>,
+      label: <p>hi</p>,
       key: '0',
       danger: true,
     },
@@ -100,7 +100,7 @@ const items: MenuProps['items'] = [
       key: '3',
     },
 ];
-
+​
 const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -109,18 +109,18 @@ const layout = {
 const tailLayout = {
 wrapperCol: { offset: 8, span: 16 },
 };
-
-
+​
+​
 function UserComment({ comment } : any){
     return (
         <p style={{wordBreak: "break-all"}}>{comment.intraId}: {comment.content}</p>
     );
 }
-
+​
 function UserCard({ card } : any){
-
+​
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+​
     const [form] = Form.useForm();
     const totalPrice = card.deliveryPrice;
     const peopleBefore = card.currentPeople;
@@ -128,23 +128,24 @@ function UserCard({ card } : any){
       expectedPrice: totalPrice != undefined ? Math.round(totalPrice/(peopleBefore + 1)) : undefined});
     const maxP = card.maxPeople - peopleBefore;
     const {peopleNum, expectedPrice} = values;
-
+​
     const [text, setText] = useState("");
-
+​
     const showModal = () => {
         setIsModalOpen(true);
     };
-
+​
     const handleOk = () => {
         //party를 post 하는 부분
         let partyBody = form.getFieldsValue(["partyTitle", "joinable", "partyNum"]);
+        console.log("호출");
         setIsModalOpen(false);
     };
-
+​
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-
+​
     const onChange = () => {
       setValues({
         peopleNum: peopleBefore + form.getFieldValue("partyNum"),
@@ -152,19 +153,19 @@ function UserCard({ card } : any){
         Math.round(totalPrice / (peopleBefore + form.getFieldValue("partyNum"))) : undefined
       });
     };
-
+​
     function onCommentSubmit() {
         //comment를 post 하는 부분
         let commentBody = {
             content: text,
         };
     }
-
+​
     function onTextChange(e : any) {
         setText(e.target.value);
         console.log(e.target.value);
     }
-
+​
     //어떤 호출로 파티들을 받아옴
     const parties: DataType[] = [
         {
@@ -186,7 +187,7 @@ function UserCard({ card } : any){
             joinable: false,
         },
     ];
-
+​
     const comments = [
         {
             id: 0,
@@ -199,14 +200,18 @@ function UserCard({ card } : any){
             content: "sdlkfjlsjlskjsd",
         },
     ];
-
+​
+    const onPanelChange = (keys: any) => {
+        console.log(keys);
+      };
+    
     return (
-            <Collapse>
+            <Collapse onChange={onPanelChange}>
                 <Panel header={card.title} key="1" showArrow={false}
                 extra={<span>{"메뉴: " + card.menu + " "} <UserOutlined /> {card.currentPeople} / {card.maxPeople}</span>}>
                     <Space style={{display: "flex", justifyContent: "space-between"}} direction="horizontal">
                         <p>추가 정보:</p>
-                        <Button type="primary" disabled={!card.available} onClick={showModal}>{/*나중에 추가*/}
+                        <Button type="primary"  disabled={!card.available} onClick={showModal}>
                             그룹에 참여하기
                         </Button>
                         <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
@@ -225,21 +230,29 @@ function UserCard({ card } : any){
                             }}
                             className={styles.form}
                             >
-                            <Form.Item name="partyTitle" label="파티 이름" rules={[{ required: true }]}>
+                            <Form.Item name="partyTitle" label="파티 이름" rules={[{ required: true, message: '필수 항목입니다' }]}>
                                 <Input placeholder='파티 이름을 적어주세요'/>
                             </Form.Item>
                             <Form.Item name="joinable" rules={[{ required: false }]} valuePropName="checked">
                                 <Checkbox defaultChecked={false}>따로 먹을게요</Checkbox>
                             </Form.Item>
-                            <Form.Item name="partyNum" label="파티 인원" rules={[{ required: true }]}>
+                            <Form.Item name="partyNum" label="파티 인원" rules={[{ required: true, message: '필수 항목입니다' }]}>
                                 <InputNumber min={1} max={maxP} onChange={onChange} />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    제출
+                                </Button>
+                                <Button htmlType="button" danger onClick={handleCancel}>
+                                    취소
+                                </Button>
                             </Form.Item>
                             </Form>
                         </Modal>
                     </Space>
                     <p style={{wordBreak: "break-all"}}>{card.content}</p>
                     <Table columns={columns} dataSource={parties} pagination={false}/>
-
+​
                     <Collapse ghost>
                         <Panel header="댓글 창" key='1'>
                             {comments.map(comment => (
@@ -255,45 +268,47 @@ function UserCard({ card } : any){
             </Collapse>
     );
 }
-
+​
 const Main: React.FC = () => {
     const [switchValue, setSwitchValue] = useState(true);
-    const [availableCard, setAvailableCard] = useState([]);
-    const [unavailableCard, setUnavailableCard] = useState([]);
     const router = useRouter();
-
+​
     useEffect(() => {
       setCookieFromCode(router);
     }, []);
-
+    
     const handleSwitchChange = (checked: boolean) => {
         setSwitchValue(checked);
     };
-
-    let aCard = Array();
-    let uCard = Array();
-    let cards = Array();
-
-
-    const getCards = async () => {
-      await axios.get("http://localhost:8080/posts")
-        .then(res => {
-          cards = res.data;
-          cards.map(c => (
-              c.available ? aCard.push(c) : uCard.push(c)
-          ));
-          setAvailableCard(aCard);
-          setUnavailableCard(uCard);
-          console.log(cards);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-
-    getCards();
-    console.log("out:", cards);
-
+​
+    const cards = [
+        {
+            id: 1,
+            title: "1.아무거나",
+            currentPeople: 5,
+            maxPeople: 10,
+            menu: "미정",
+            deliveryPrice: 4000,
+            content: "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
+            available: true,
+        },
+        {
+            id: 2,
+            title: "2.아무거나 드실 분",
+            currentPeople: 6,
+            maxPeople: 11,
+            menu: "맛있는 거",
+            deliveryPrice: 3000,
+            content: "1234567890",
+            available: false,
+        },
+    ];
+    let availableCard = Array();
+    let unavailableCard = Array();
+    cards.map(c => (
+        c.available ? availableCard.push(c) : unavailableCard.push(c)
+    ));
+    
     return (
         <>
         <Header className={styles.headerStyle}>
@@ -312,27 +327,11 @@ const Main: React.FC = () => {
         <FloatButton icon={<FormOutlined />} tooltip={<div>그룹 생성하기</div>} 
         shape="square" type="primary" href="/group" description="그룹 생성"/>
         <div className={styles.pad}>
-            {switchValue ? availableCard.map(card => (<UserCard card={card} key={card._id}/>))
-            : unavailableCard.map(card => (<UserCard card={card} key={card._id}/>))}
+            {switchValue ? availableCard.map(card => (<UserCard card={card} key={card.id}/>))
+            : unavailableCard.map(card => (<UserCard card={card} key={card.id}/>))}
         </div>
         </>
         );
 }
-
+​
 export default withAuth(Main);
-
-
-// const Home: FC = () => {
-//   const router = useRouter();
-  
-//   console.log("home page");
-//   useEffect(() => {
-//     setCookieFromCode(router);
-//   }, []);
-
-//   console.log(getNickname());
-
-//   return <h1>home</h1>;
-// };
-
-//export default withAuth(Home);
