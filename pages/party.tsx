@@ -2,6 +2,7 @@ import { Button, Form, Input, Select, Checkbox, InputNumber } from 'antd';
 import React, {useState} from 'react';
 import styles from '../styles/party.module.css';
 import axios from 'axios';
+import withAuth from 'components/withAuth';
 
 const { Option } = Select;
 
@@ -86,4 +87,4 @@ const Party: React.FC = () => {
   );
 };
 
-export default Party;
+export default withAuth(Party);

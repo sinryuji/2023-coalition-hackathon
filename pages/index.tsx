@@ -6,18 +6,18 @@ import React, {useState} from 'react';
 import styles from '../styles/header.module.css';
 import {FormOutlined, UserOutlined} from '@ant-design/icons';
 import axios from "axios";
-import { useEffect, FC } from 'react';
+import { useEffect } from 'react';
 import { useRouter, NextRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import withAuth from "../components/withAuth";
-import { goMainPage, getNickname } from '../utils/utils';
-​
+import { goMainPage } from '../utils/utils';
+
 function removeCodeFromUrl() {
   const { protocol, host, pathname } = window.location;
   const newUrl = `${protocol}//${host}${pathname}`;
   window.history.replaceState({}, document.title, newUrl);
 }
-​
+
 async function setCookieFromCode(router: NextRouter) {
   const code = new URLSearchParams(window.location.search).get("code");
   if (code !== null) {
@@ -41,20 +41,20 @@ async function setCookieFromCode(router: NextRouter) {
     }
   }
 }
-​
+
 React.useLayoutEffect = React.useEffect;
-​
+
 const { TextArea } = Input;
 const { Panel } = Collapse;
 const { Header, Footer, Sider, Content } = Layout;
-​
+
 interface DataType {
     intraId: string;
     partyTitle: string;
     partyNum: number;
     joinable: boolean;
   }
-​
+
 const columns: ColumnsType<DataType> = [
     {
         title: '파티장',
@@ -81,7 +81,7 @@ const columns: ColumnsType<DataType> = [
         render: (joinable) => joinable == true ? <p>같이 먹어도 되요</p> : <p>따로 먹을게요</p>,
     },
 ];
-​
+
 const items: MenuProps['items'] = [
     {
       label: <p>hi</p>,
@@ -100,7 +100,7 @@ const items: MenuProps['items'] = [
       key: '3',
     },
 ];
-​
+
 const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -109,18 +109,18 @@ const layout = {
 const tailLayout = {
 wrapperCol: { offset: 8, span: 16 },
 };
-​
-​
+
+
 function UserComment({ comment } : any){
     return (
         <p style={{wordBreak: "break-all"}}>{comment.intraId}: {comment.content}</p>
     );
 }
-​
+
 function UserCard({ card } : any){
-​
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-​
+
     const [form] = Form.useForm();
     const totalPrice = card.deliveryPrice;
     const peopleBefore = card.currentPeople;
@@ -128,24 +128,24 @@ function UserCard({ card } : any){
       expectedPrice: totalPrice != undefined ? Math.round(totalPrice/(peopleBefore + 1)) : undefined});
     const maxP = card.maxPeople - peopleBefore;
     const {peopleNum, expectedPrice} = values;
-​
+
     const [text, setText] = useState("");
-​
+
     const showModal = () => {
         setIsModalOpen(true);
     };
-​
+
     const handleOk = () => {
         //party를 post 하는 부분
         let partyBody = form.getFieldsValue(["partyTitle", "joinable", "partyNum"]);
         console.log("호출");
         setIsModalOpen(false);
     };
-​
+
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-​
+
     const onChange = () => {
       setValues({
         peopleNum: peopleBefore + form.getFieldValue("partyNum"),
@@ -153,19 +153,19 @@ function UserCard({ card } : any){
         Math.round(totalPrice / (peopleBefore + form.getFieldValue("partyNum"))) : undefined
       });
     };
-​
+
     function onCommentSubmit() {
         //comment를 post 하는 부분
         let commentBody = {
             content: text,
         };
     }
-​
+
     function onTextChange(e : any) {
         setText(e.target.value);
         console.log(e.target.value);
     }
-​
+
     //어떤 호출로 파티들을 받아옴
     const parties: DataType[] = [
         {
@@ -187,7 +187,7 @@ function UserCard({ card } : any){
             joinable: false,
         },
     ];
-​
+
     const comments = [
         {
             id: 0,
@@ -200,7 +200,7 @@ function UserCard({ card } : any){
             content: "sdlkfjlsjlskjsd",
         },
     ];
-​
+
     const onPanelChange = (keys: any) => {
         console.log(keys);
       };
@@ -252,7 +252,7 @@ function UserCard({ card } : any){
                     </Space>
                     <p style={{wordBreak: "break-all"}}>{card.content}</p>
                     <Table columns={columns} dataSource={parties} pagination={false}/>
-​
+
                     <Collapse ghost>
                         <Panel header="댓글 창" key='1'>
                             {comments.map(comment => (
@@ -268,11 +268,11 @@ function UserCard({ card } : any){
             </Collapse>
     );
 }
-​
+
 const Main: React.FC = () => {
     const [switchValue, setSwitchValue] = useState(true);
     const router = useRouter();
-​
+
     useEffect(() => {
       setCookieFromCode(router);
     }, []);
@@ -280,7 +280,7 @@ const Main: React.FC = () => {
     const handleSwitchChange = (checked: boolean) => {
         setSwitchValue(checked);
     };
-​
+
     const cards = [
         {
             id: 1,
@@ -333,5 +333,5 @@ const Main: React.FC = () => {
         </>
         );
 }
-​
+
 export default withAuth(Main);

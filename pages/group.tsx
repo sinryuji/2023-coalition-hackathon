@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styles from '../styles/party.module.css';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import withAuth from 'components/withAuth';
 
 const { TextArea } = Input;
 
@@ -114,4 +115,4 @@ const Group: React.FC = () => {
   );
 };
 
-export default Group;
+export default withAuth(Group);
