@@ -8,11 +8,10 @@ import { Party } from './schemas/party.schema';
 export class PartiesController {
   constructor(private readonly partiesService: PartiesService) {}
 
-  @Post(':postId')
+  @Post()
   async create(
-    @Param('postId') postId: string,
     @Body() createPartyDto: CreatePartyDto): Promise<boolean> {
-    return this.partiesService.create(postId, createPartyDto);
+    return this.partiesService.create(createPartyDto);
   }
 
   @Get(':postId')

@@ -21,7 +21,7 @@ export class Party {
   @Prop({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
-    res: 'Post',
+    ref: 'Post',
     autopopulate: true
   })
   postId: mongoose.Schema.Types.ObjectId;

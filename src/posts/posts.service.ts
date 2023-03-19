@@ -3,26 +3,33 @@ import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post, PostDocument } from './schemas/post.schema';
+import { Comment, CommentDocument } from '../comments/schemas/comment.schema';
+import { Party, PartyDocument } from '../parties/schemas/party.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectModel(Post.name) private postModel: Model<PostDocument>
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Party.name) private partyModel: Model<PartyDocument>
  ) {}
 
   async create(createPostDto: CreatePostDto): Promise<boolean> {
     try {
+      var mongoose = require('mongoose');
+      const postId = mongoose.Types.ObjectId();
       const post = new this.postModel({
-        title: "hi",
-        menu: "chicken",
-        content: "",
-        deliveryPrice: 3000,
-        intraId: "hyeongki",
-        maximumPeopleNum: 10,
-        currentPeopleNum: 1,
-        matchingEndTime: Date.now(),
-        avaliable: true,
+        _id: postId,
+        title: createPostDto.title,
+        menu: createPostDto.menu,
+        content: createPostDto.content,
+        deliveryPrice: createPostDto.deliveryPrice,
+        intraId: createPostDto.intraId,
+        maximumPeopleNum: createPostDto.maximumPeopleNum,
+        currentPeopleNum: createPostDto.currentPeopleNum,
+        matchingEndTime: createPostDto.matchingEndTime,
+        available: createPostDto.available,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -51,12 +58,36 @@ export class PostsService {
     }
   }
 
+  async findByAvailable(flag: boolean): Promise<Post[]> {
+    try {
+      const result = await this.postModel.find({
+        available: { $eq: flag } 
+      }).exec();
+      return result;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async update(id: string, updatePostDto: UpdatePostDto): Promise<boolean> {
     try {
-      await this.postModel.findByIdAndUpdate(
+      const ret = await this.postModel.findByIdAndUpdate(
         { _id: id },
-        { title: "hello" }
-      );
+        {
+          title: updatePostDto.title,
+          menu: updatePostDto.menu,
+          content: updatePostDto.content,
+          deliveryPrice: updatePostDto.deliveryPrice,
+          intraId: updatePostDto.intraId,
+          maximumPeopleNum: updatePostDto.maximumPeopleNum,
+          currentPeopleNum: updatePostDto.currentPeopleNum,
+          matchingEndTime: updatePostDto.matchingEndTime,
+          available: updatePostDto.available,
+          updatedAt: Date.now(),
+        }
+      ).exec();
+      if (!ret)
+        return false;
       return true;
     } catch (err) {
       console.log(err);
@@ -65,7 +96,23 @@ export class PostsService {
 
   async remove(id: string): Promise<boolean> {
     try {
-      await this.postModel.findByIdAndDelete(id).exec();
+      await this.commentModel.deleteMany({ postId: id });
+      await this.partyModel.deleteMany({ postId: id });
+      await this.postModel.findByIdAndDelete(id);
+      return true;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateUnavailable(id: string): Promise<boolean> {
+    try {
+      const post = await this.postModel.findByIdAndUpdate(
+        { _id: id },
+        { available: false }
+      ).exec();
+      if (!post)
+        return false
       return true;
     } catch (err) {
       console.log(err);

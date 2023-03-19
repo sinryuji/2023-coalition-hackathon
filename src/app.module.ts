@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommentsModule } from './comments/comments.module';
 import { PartiesModule } from './parties/parties.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -17,9 +19,12 @@ import { PartiesModule } from './parties/parties.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
+//    TaskModule,
     PostsModule,
     CommentsModule,
-    PartiesModule],
+    PartiesModule,
+    ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -27,7 +27,7 @@ export class CreatePostDto {
   matchingEndTime: number;
 
   @IsBoolean()
-  avaliable: boolean;
+  available: boolean;
 
   @IsNumber()
   createdAt: number;

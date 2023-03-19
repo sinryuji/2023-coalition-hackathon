@@ -10,12 +10,12 @@ export class CommentsService {
   constructor(
    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>) {}
 
-  async create(postId: string, createCommentDto: CreateCommentDto): Promise<boolean> {
+  async create(createCommentDto: CreateCommentDto): Promise<boolean> {
     try {
       const comment = new this.commentModel({
-        postId: postId,
-        content: "hello",
-        intraId: "hyeongki",
+        postId: createCommentDto.postId,
+        content: createCommentDto.content,
+        intraId: createCommentDto.intraId,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -45,7 +45,12 @@ export class CommentsService {
     try {
       await this.commentModel.findByIdAndUpdate(
         { _id: id },
-        { content: "fuck" }
+        { 
+          postId: id,
+          content: updateCommentDto.content,
+          intraId: updateCommentDto.intraId,
+          updatedAt: Date.now(),
+        }
       );
       return true;
     } catch(err) {

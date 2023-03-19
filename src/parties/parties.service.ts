@@ -10,14 +10,14 @@ export class PartiesService {
   constructor(
    @InjectModel(Party.name) private partyModel: Model<PartyDocument>) {}
 
-  async create(postId: string, createPartyDto: CreatePartyDto): Promise<boolean> {
+  async create(createPartyDto: CreatePartyDto): Promise<boolean> {
     try {
       const party = new this.partyModel({
-        postId: postId,
-        partyTitle: "hihi",
-        joinable: true,
-        intarId: "hyeongki",
-        peopleNum: 1,
+        postId: createPartyDto.postId,
+        partyTitle: createPartyDto.partyTitle,
+        joinable: createPartyDto.joinable,
+        intraId: createPartyDto.intraId,
+        peopleNum: createPartyDto.peopleNum,
         createdAt: Date.now(),
         updatedAt: Date.now()
       });
@@ -33,6 +33,7 @@ export class PartiesService {
       const result = await this.partyModel.find({
         postId: { $eq: postId } 
       }).exec();
+      console.log("get parties");
       return result;
     } catch(err) {
       console.log(err);
@@ -42,6 +43,7 @@ export class PartiesService {
   async findOne(id: string): Promise<Party> {
     try {
       const result = await this.partyModel.findById(id).exec();
+      console.log("get party");
       return result;
     } catch(err) {
       console.log(err);
@@ -52,7 +54,14 @@ export class PartiesService {
     try {
       await this.partyModel.findByIdAndUpdate(
         { _id: id },
-        { partyTitle: "fuck" }
+        { 
+          postId: id,
+          partyTitle: updatePartyDto.partyTitle,
+          joinable: updatePartyDto.joinable,
+          intarId: updatePartyDto.intraId,
+          peopleNum: updatePartyDto.peopleNum,
+          updatedAt: Date.now()
+        }
       );
       return true;
     } catch(err) {
