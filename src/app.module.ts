@@ -20,7 +20,7 @@ import { TaskModule } from './task/task.module';
       inject: [ConfigService],
     }),
     ScheduleModule.forRoot(),
-//    TaskModule,
+    TaskModule,
     PostsModule,
     CommentsModule,
     PartiesModule,
