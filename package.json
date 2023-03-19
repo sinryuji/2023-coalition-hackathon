@@ -21,7 +21,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "forever": "forever start -c 'yarn start:dev' ./dist/main.js"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -35,6 +36,7 @@
     "axios": "^1.3.4",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
+    "forever": "^4.0.3",
     "mongoose": "^6.10.3",
     "next": "^13.2.4",
     "react": "^18.2.0",
