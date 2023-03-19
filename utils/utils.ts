@@ -52,7 +52,7 @@ export function goMainPage(router: NextRouter) {
   router.push(MAIN_PAGE);
 }
 
-const getNicknameFromToken = async () => {
+export const getNicknameFromToken = async () => {
   const accessToken = Cookies.get('accessToken');
   try {
     const response = await axios.get("https://api.intra.42.fr/v2/me", {

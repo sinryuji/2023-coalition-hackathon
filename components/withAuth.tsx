@@ -10,7 +10,6 @@ const withAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
       const isLoggedIn = async () => {
         const loggedIn = await checkIfLoggedIn(router);
         if (!loggedIn) {
-          console.log('router push login');
           router.push("/login");
         }
       };

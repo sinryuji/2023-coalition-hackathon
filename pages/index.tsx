@@ -10,7 +10,9 @@ import { useEffect } from 'react';
 import { useRouter, NextRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import withAuth from "../components/withAuth";
-import { goMainPage } from '../utils/utils';
+import { getNickname, getNicknameFromToken, goMainPage } from '../utils/utils';
+import { nicknameState } from "components/atom";
+import { useRecoilState } from "recoil";
 
 function removeCodeFromUrl() {
   const { protocol, host, pathname } = window.location;
@@ -36,6 +38,7 @@ async function setCookieFromCode(router: NextRouter) {
       }
       goMainPage(router);
       Cookies.set("accessToken", data.access_token);
+      console.log(getNickname());
     } catch (error) {
       console.error(error);
     }
@@ -47,6 +50,10 @@ React.useLayoutEffect = React.useEffect;
 const { TextArea } = Input;
 const { Panel } = Collapse;
 const { Header, Footer, Sider, Content } = Layout;
+
+//let userNickName: string;
+//if ()
+//let userNickName: string = getNickname();
 
 interface DataType {
     intraId: string;
@@ -83,22 +90,22 @@ const columns: ColumnsType<DataType> = [
 ];
 
 const items: MenuProps['items'] = [
-    {
-      label: <p>hi</p>,
-      key: '0',
-      danger: true,
-    },
-    {
-      label: <p>hihi</p>,
-      key: '1',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      label: '3rd menu item',
-      key: '3',
-    },
+  {
+    label: <p>hi</p>,
+    key: '0',
+    danger: true,
+  },
+  {
+    label: <p>hihi</p>,
+    key: '1',
+  },
+  {
+    type: 'divider',
+  },
+  {
+    label: '3rd menu item',
+    key: '3',
+  },
 ];
 
 const layout = {
@@ -169,7 +176,7 @@ function UserCard({ card } : any){
     //어떤 호출로 파티들을 받아옴
     const parties: DataType[] = [
         {
-            intraId: "someone",
+            intraId: 'userNickName',
             partyTitle: "파티 이름",
             partyNum: 2,
             joinable: true,
@@ -203,7 +210,7 @@ function UserCard({ card } : any){
 
     const onPanelChange = (keys: any) => {
         console.log(keys);
-      };
+    };
     
     return (
             <Collapse onChange={onPanelChange}>
@@ -271,10 +278,19 @@ function UserCard({ card } : any){
 
 const Main: React.FC = () => {
     const [switchValue, setSwitchValue] = useState(true);
+    const [nickname, setNickname] = useRecoilState(nicknameState);
     const router = useRouter();
 
     useEffect(() => {
+      if (Cookies.get('accessToken')) {
+          console.log('in Main');
+          getData();
+      }
       setCookieFromCode(router);
+      async function getData(){
+        const result = await getNicknameFromToken();
+        setNickname(result);
+      }
     }, []);
     
     const handleSwitchChange = (checked: boolean) => {
@@ -318,7 +334,7 @@ const Main: React.FC = () => {
                 <Dropdown menu={{ items }} trigger={['click']}>
                     <a onClick={(e) => e.preventDefault()}>
                         <Space>
-                        Click me
+                        {nickname ? nickname : "Click me"}
                         </Space>
                     </a>
                 </Dropdown>

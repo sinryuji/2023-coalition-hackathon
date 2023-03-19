@@ -7,7 +7,6 @@ const Login = () => {
   useEffect(() => {
     const isLoggedIn = async () => {
       const loggedIn = await checkIfLoggedIn(router);
-      console.log('login status: ', loggedIn);
       if (loggedIn) {
         goMainPage(router);
       }
