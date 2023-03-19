@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  42gongpa:
+    restart: always
+    build: .
+    container_name: 42gongpa-backend
+    ports:
+      - "8080:8080"
