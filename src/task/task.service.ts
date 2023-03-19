@@ -7,7 +7,7 @@ import { PostsService } from '../posts/posts.service';
 export class TaskService {
   constructor(private readonly postsService: PostsService) {}
 
-  @Cron('0/5 * * * * *')
+  @Cron('0 * * * * *')
   async overTimeUnavailable() {
     try {
       console.log("Cron: overTimeUnavailable!!");
@@ -24,7 +24,7 @@ export class TaskService {
     }
   }
 
-  @Cron('0/10 * * * * *')
+  @Cron('0 * * * * *')
   async overTimeDelete() {
     try {
       console.log("Cron: overTimeDelete!!");
