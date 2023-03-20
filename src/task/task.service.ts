@@ -29,7 +29,7 @@ export class TaskService {
     try {
       console.log("Cron: overTimeDelete!!");
       const date = new Date();
-      date.setHours(date.getHours() + 120);
+      date.setHours(date.getHours() - 2);
       const posts: Post[] = await this.postsService.findByAvailable(false);
       for (let i: number = 0; i < posts.length; i++) {
         if (date.getTime() >= posts[i].matchingEndTime) {
