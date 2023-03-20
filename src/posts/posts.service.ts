@@ -34,7 +34,16 @@ export class PostsService {
         updatedAt: Date.now(),
       });
       await post.save();
-      await this.partyModel.findByIdAndUpdate(postId, { joinable: createPostDto.joinable });
+      const party = new this.partyModel({
+        postId: postId,
+        partyTitle: createPostDto.intraId + "(그룹장)의 파티",
+        joinable: createPostDto.joinable,
+        intraId: createPostDto.intraId,
+        peopleNum: createPostDto.currentPeopleNum,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+      await party.save();
     } catch(err) {
       console.log(err);
     }
