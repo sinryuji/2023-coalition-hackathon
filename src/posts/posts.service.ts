@@ -34,6 +34,7 @@ export class PostsService {
         updatedAt: Date.now(),
       });
       await post.save();
+      await this.partyModel.findByIdAndUpdate(postId, { joinable: createPostDto.joinable });
     } catch(err) {
       console.log(err);
     }

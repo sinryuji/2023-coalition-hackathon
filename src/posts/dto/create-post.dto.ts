@@ -34,4 +34,7 @@ export class CreatePostDto {
 
   @IsNumber()
   updatedAt: number;
+
+  @IsBoolean()
+  joinable: boolean;
 }
